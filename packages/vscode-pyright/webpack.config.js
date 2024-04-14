@@ -10,6 +10,9 @@ const { cacheConfig, monorepoResourceNameMapper, tsconfigResolveAliases } = requ
 const outPath = path.resolve(__dirname, 'dist');
 const typeshedFallback = path.resolve(__dirname, '..', 'pyright-internal', 'typeshed-fallback');
 
+// ! Cython
+const cygdb = path.resolve(__dirname, '..', 'vscode-cython-debug', 'lib');
+
 /**@type {(env: any, argv: { mode: 'production' | 'development' | 'none' }) => import('webpack').Configuration}*/
 module.exports = (_, { mode }) => {
     return {
@@ -55,6 +58,7 @@ module.exports = (_, { mode }) => {
                 },
             ],
         },
-        plugins: [new CopyPlugin({ patterns: [{ from: typeshedFallback, to: 'typeshed-fallback' }] })],
+        // ! Cython
+        plugins: [new CopyPlugin({ patterns: [{ from: typeshedFallback, to: 'typeshed-fallback' }, { from: cygdb, to: 'lib' }] })],
     };
 };

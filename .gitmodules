@@ -1,0 +1,3 @@
+[submodule "packages/vscode-cython-debug"]
+	path = packages/vscode-cython-debug
+	url = https://github.com/ktnrg45/vscode-cython-debug.git
