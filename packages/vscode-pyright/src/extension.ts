@@ -42,6 +42,7 @@ import { Commands } from 'pyright-internal/commands/commands';
 import { isThenable } from 'pyright-internal/common/core';
 import { extractPathFromUri } from 'pyright-internal/common/pathUtils';
 
+import { activateCythonDebug } from '../../vscode-cython-debug/src/activate';
 import { FileBasedCancellationStrategy } from './cancellationUtils';
 import { CythonServices } from './cythonServices';
 
@@ -272,6 +273,8 @@ export async function activate(context: ExtensionContext) {
         );
     });
 
+    // ! Cython
+    activateCythonDebug(context, cythonServices.debugFactory, cythonServices.debugConfigProvider);
     await client.start();
 }
 
