@@ -11,7 +11,17 @@ const outPath = path.resolve(__dirname, 'dist');
 const typeshedFallback = path.resolve(__dirname, '..', 'pyright-internal', 'typeshed-fallback');
 
 // ! Cython
-const cygdb = path.resolve(__dirname, '..', 'vscode-cython-debug', 'lib');
+// Watcher doesn't seem to watch symlinked files in copy plugin
+// So copy manually.
+const libGdb = path.resolve(__dirname, '..', 'vscode-cython-debug', 'lib');
+const externGdb = path.resolve(__dirname, '..', 'vscode-cython-debug', '_external');
+const cythonGdb = path.resolve(externGdb, 'cython', 'Cython', 'Debugger');
+const libCython = path.resolve(cythonGdb, 'libcython.py');
+const libPython = path.resolve(cythonGdb, 'libpython.py');
+const gdb = path.resolve(externGdb, 'binutils-gdb', 'gdb', 'python', 'lib', 'gdb');
+const destGdb = 'lib';
+const destPython = path.join(destGdb, 'python');
+const destCygdb = path.join(destPython, 'cygdb');
 
 /**@type {(env: any, argv: { mode: 'production' | 'development' | 'none' }) => import('webpack').Configuration}*/
 module.exports = (_, { mode }) => {
@@ -58,7 +68,16 @@ module.exports = (_, { mode }) => {
                 },
             ],
         },
-        // ! Cython
-        plugins: [new CopyPlugin({ patterns: [{ from: typeshedFallback, to: 'typeshed-fallback' }, { from: cygdb, to: 'lib' }] })],
+        plugins: [
+            new CopyPlugin({
+                patterns: [
+                    { from: typeshedFallback, to: 'typeshed-fallback' },
+                    { from: libGdb, to: destGdb },
+                    { from: libCython, to: path.join(destCygdb, 'libcython.py') },
+                    { from: libPython, to: path.join(destCygdb, 'libpython.py') },
+                    { from: gdb, to: path.join(destPython, 'gdb') },
+                ],
+            }),
+        ],
     };
 };
